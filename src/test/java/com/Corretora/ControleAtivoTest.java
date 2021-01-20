@@ -1,19 +1,20 @@
-package com.Corretora;
+package com.corretora;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assume.assumeNoException;
+import com.corretora.ControleAtivos;
+import com.corretora.enums.Tipo;
+import com.corretora.interfaces.IControleAtivos;
 
-
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ControleAtivoTest {
     @Test
     public void CriarAtivoExistenteTest() {
         IControleAtivos controle = new ControleAtivos();
         String mensagemEsperada = "Ativo já existe";
-        try {
+        try{
             controle.Criar("YDUQ3", 23.14d, Tipo.RV);
             controle.Criar("YDUQ3", 23.14d, Tipo.RV);
         } catch (IllegalArgumentException e) {            
@@ -24,11 +25,8 @@ public class ControleAtivoTest {
     @Test
     public void CriarAtivoTest() {
         IControleAtivos controle = new ControleAtivos();
-        try {
+        
             controle.Criar("YDUQ3", 23.14d, Tipo.RV);           
-        } catch (Exception e) {
-            assumeNoException(e);
-        }
     }
 
     @Test
@@ -45,37 +43,28 @@ public class ControleAtivoTest {
     @Test
     public void GetAtivoTest() {
         IControleAtivos controle = new ControleAtivos();
-        try {
+        
             controle.Criar("YDUQ3", 23.14d, Tipo.RV);
             assertTrue(controle.GetAtivo("YDUQ3").GetNome().equals("YDUQ3"));            
-        } catch (Exception e) {
-            assumeNoException(e);
-        }
     }
 
     @Test
     public void GetAtivosTest() {
         IControleAtivos controle = new ControleAtivos();
-        try {
+        
             controle.Criar("YDUQ3", 23.14d, Tipo.RV);
             controle.Criar("RBRF11", 111.52d, Tipo.FUNDO);
             assertTrue(controle.GetAtivos().size() == 2);
             assertTrue(controle.GetAtivos().get(0).GetNome() == "YDUQ3");
             assertTrue(controle.GetAtivos().get(1).GetNome() == "RBRF11");            
-        } catch (Exception e) {
-            assumeNoException(e);
-        }
     }
 
     @Test
     public void DeletarTest() {
         IControleAtivos controle = new ControleAtivos();
-        try {
+        
             controle.Criar("YDUQ3", 23.14d, Tipo.RV);
-            controle.Deletar("YDUQ3");            
-        } catch (Exception e) {
-            assumeNoException(e);
-        }        
+            controle.Deletar("YDUQ3");                    
     }
 
     @Test
@@ -92,37 +81,28 @@ public class ControleAtivoTest {
     @Test
     public void AtualizarValorTest() {
         IControleAtivos controle = new ControleAtivos();
-        try {
+        
             controle.Criar("YDUQ3", 23.14d, Tipo.RV);
             controle.Atualizar("YDUQ3", 53.14d, Tipo.RV);                        
             assertTrue(controle.GetAtivos().get(0).GetValor() == 53.14d);
-        } catch (Exception e) {
-            assumeNoException(e);
-        }
     }
 
     @Test
     public void AtualizarTipoTest() {
         IControleAtivos controle = new ControleAtivos();
-        try {
+        
             controle.Criar("YDUQ3", 23.14d, Tipo.RV);
             controle.Atualizar("YDUQ3", 23.14d, Tipo.FUNDO);            
             assertTrue(controle.GetAtivos().get(0).GetTipo().equals(Tipo.FUNDO));
-        } catch (Exception e) {
-            assumeNoException(e);
-        }
     }
 
     @Test
     public void AtualizarNomeTest() {
         IControleAtivos controle = new ControleAtivos();
-        try {
+        
             controle.Criar("YDUQ3", 23.14d, Tipo.RV);
             controle.Atualizar("YDUQ3", "YDUQ2");
             assertTrue(controle.GetAtivos().get(0).GetNome() == "YDUQ2");
-        } catch (Exception e) {
-            assumeNoException(e);
-        }
     }
 
     @Test

@@ -1,6 +1,8 @@
-package com.Corretora;
+package com.corretora.interfaces;
 
-interface IRegistro {
+import com.corretora.enums.Tipo;
+
+public interface IRegistro {
     public String GetNome ();
     public Tipo GetTipo ();
     public Double GetQuantidade ();

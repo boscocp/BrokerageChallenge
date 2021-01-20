@@ -1,9 +1,13 @@
-package com.Corretora;
+package com.corretora;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+
+import com.corretora.enums.Tipo;
+import com.corretora.interfaces.IControleAtivos;
+import com.corretora.model.Ativo;
 
 public class ControleAtivos implements IControleAtivos {
 

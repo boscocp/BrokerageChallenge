@@ -1,4 +1,7 @@
-package com.Corretora;
+package com.corretora.model;
+
+import com.corretora.enums.Tipo;
+import com.corretora.interfaces.IRegistro;
 
 public class Registro implements IRegistro {
     protected String nome;

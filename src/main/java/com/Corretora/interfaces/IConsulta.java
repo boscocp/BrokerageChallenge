@@ -1,8 +1,8 @@
-package com.Corretora;
+package com.corretora.interfaces;
 
 import java.util.ArrayList;
 
-interface IConsulta {
+public interface IConsulta {
     public ArrayList<IRegistro> GetRegistroPorAtivo(IAtivo ativo);
     public void CriarRegistro(IAtivo ativo, IMovimentacao movimentacao);
 }

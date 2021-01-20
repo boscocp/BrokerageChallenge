@@ -1,8 +1,8 @@
-package com.Corretora;
+package com.corretora.interfaces;
 
 import java.util.Calendar;
 
-interface IMovimento {
+public interface IMovimento {
     public Calendar GetData();
     public Double GetPreco();
     public Double GetQuantidade();

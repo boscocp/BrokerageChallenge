@@ -1,4 +1,7 @@
-package com.Corretora;
+package com.corretora.model;
+
+import com.corretora.enums.Tipo;
+import com.corretora.interfaces.IAtivo;
 
 public class Ativo implements IAtivo {
     private String nome;

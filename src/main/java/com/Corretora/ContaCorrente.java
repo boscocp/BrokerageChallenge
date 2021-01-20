@@ -1,4 +1,9 @@
-package com.Corretora;
+package com.corretora;
+
+import com.corretora.interfaces.IConsulta;
+import com.corretora.interfaces.IContaCorrente;
+import com.corretora.interfaces.IMovimentacao;
+import com.corretora.interfaces.ISaldo;
 
 public class ContaCorrente implements IContaCorrente {
     protected ISaldo saldo;

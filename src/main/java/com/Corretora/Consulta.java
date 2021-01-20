@@ -1,10 +1,18 @@
-package com.Corretora;
+package com.corretora;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.LinkedList;
+
+import com.corretora.enums.Tipo;
+import com.corretora.interfaces.IAtivo;
+import com.corretora.interfaces.IConsulta;
+import com.corretora.interfaces.IMovimentacao;
+import com.corretora.interfaces.IMovimento;
+import com.corretora.interfaces.IRegistro;
+import com.corretora.model.Registro;
 
 public class Consulta implements IConsulta {
     protected Hashtable<String, ArrayList<IRegistro>> registros = new Hashtable<String, ArrayList<IRegistro>>();

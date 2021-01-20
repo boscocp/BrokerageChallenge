@@ -1,7 +1,9 @@
-package com.Corretora;
+package com.corretora;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+
+import com.corretora.interfaces.ISaldo;
 
 public class Saldo implements ISaldo {
     /**

@@ -1,5 +1,7 @@
-package com.Corretora;
+package com.corretora.model;
 import java.util.Calendar;
+
+import com.corretora.interfaces.IMovimento;
 
 public class Movimento implements IMovimento{
     protected Calendar data;

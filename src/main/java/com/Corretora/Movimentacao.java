@@ -1,8 +1,15 @@
-package com.Corretora;
+package com.corretora;
 
-import java.util.LinkedList;
 import java.math.BigDecimal;
 import java.util.Hashtable;
+import java.util.LinkedList;
+
+import com.corretora.exception.ValorNegativoException;
+import com.corretora.interfaces.IAtivo;
+import com.corretora.interfaces.IContaCorrente;
+import com.corretora.interfaces.IMovimentacao;
+import com.corretora.interfaces.IMovimento;
+import com.corretora.model.Movimento;
 
 // supondo que havera mais adicao que outras operacoes em compras e vendas,
 // linkedList eh O(1) para inserir e o ArrayList O(n).
@@ -14,30 +21,23 @@ public class Movimentacao implements IMovimentacao {
     protected Hashtable<String, Double> htQuantidadeAtivos = new Hashtable<String, Double>();
 
     public LinkedList<IMovimento> GetCompras() {
-        try {
-            return TentarGetMovimento(compras);
-        } catch (Exception e) {
-            System.out.println(e);
-            throw e;
+        if (compras == null) {
+            compras = new LinkedList<IMovimento>();
         }
+        return compras;
     }
 
     public LinkedList<String> GetAtivosEmPosse() {
-        try {
-            return TentarGetAtivosEmPosse();
-        } catch (Exception e) {
-            System.out.println(e);
-            throw e;
-        }
+        if (htQuantidadeAtivos == null)
+            htQuantidadeAtivos = new Hashtable<String, Double>();
+        return TentarGetAtivosEmPosse();
     }
 
     public LinkedList<IMovimento> GetVendas() {
-        try {
-            return TentarGetMovimento(vendas);
-        } catch (Exception e) {
-            System.out.println(e);
-            throw e;
+        if (vendas == null) {
+            vendas = new LinkedList<IMovimento>();
         }
+        return vendas;
     }
 
     public Double GetQuantidadeAtivos(IAtivo ativo) {
@@ -50,12 +50,7 @@ public class Movimentacao implements IMovimentacao {
     }
 
     public void ComprarAtivos(IAtivo ativo, Double preco, Double quantidade, IContaCorrente conta) {
-        try {
-            TentarComprarAtivos(ativo, preco, quantidade, conta);
-        } catch (Exception e) {
-            System.out.println(e);
-            throw e;
-        }
+        TentarComprarAtivos(ativo, preco, quantidade, conta);
     }
 
     public void VenderAtivos(IAtivo ativo, Double preco, Double quantidade, IContaCorrente conta) {
@@ -67,21 +62,9 @@ public class Movimentacao implements IMovimentacao {
         }
     }
 
-    public LinkedList<IMovimento> TentarGetMovimento(LinkedList<IMovimento> movimentos) throws NullPointerException {
-        if (movimentos.isEmpty()) {
-            throw new NullPointerException();
-        } else {
-            return movimentos;
-        }
-    }
-
-    public LinkedList<String> TentarGetAtivosEmPosse() throws NullPointerException {
+    private LinkedList<String> TentarGetAtivosEmPosse() {
         LinkedList<String> ativosEmPosse = new LinkedList<String>(htQuantidadeAtivos.keySet());
-        if (ativosEmPosse.isEmpty()) {
-            throw new NullPointerException();
-        } else {
-            return ativosEmPosse;
-        }
+        return ativosEmPosse;
     }
 
     public Double TentarQuantidadeAtivosEmPosse(IAtivo ativo) throws NullPointerException {
@@ -95,62 +78,48 @@ public class Movimentacao implements IMovimentacao {
 
     public void TentarComprarAtivos(IAtivo ativo, Double preco, Double quantidade, IContaCorrente conta)
             throws IllegalArgumentException {
-        if (ValidarTransacao(ativo, preco, quantidade) != null){
-            throw ValidarTransacao(ativo, preco, quantidade);
-        } else {
-            String mensagem = "Compra de Ativos: " + ativo.GetNome() + " | quantidade: " + quantidade;
-            IMovimento movimento = new Movimento(ativo.GetNome(), preco, quantidade);
-            conta.GetSaldo().LancarSaida(MultiplicarValorQuantidade(preco, quantidade), mensagem);
-            AtualizarHTQuantidadeAtivos(ativo, quantidade);
-            compras.add(movimento);
+        ValidarTransacao(ativo, preco, quantidade);
+        String mensagem = "Compra de Ativos: " + ativo.GetNome() + " | quantidade: " + quantidade;
+        IMovimento movimento = new Movimento(ativo.GetNome(), preco, quantidade);
+        conta.GetSaldo().LancarSaida(MultiplicarValorQuantidade(preco, quantidade), mensagem);
+        AtualizarHTQuantidadeAtivos(ativo, quantidade);
+        compras.add(movimento);
+
+    }
+
+    public void ValidarTransacao(IAtivo ativo, Double preco, Double quantidade) throws IllegalArgumentException {
+        try {
+            ValidarValorPositivo(quantidade, "quantidade");
+            ValidarValorPositivo(preco, "preco");
+            ValidarCasasDecimais(quantidade);
+        } catch (IllegalArgumentException e) {
+            throw e;
         }
     }
 
-    public IllegalArgumentException ValidarTransacao(IAtivo ativo, Double preco, Double quantidade) {
-        
-        if (!ValidarValorPositivo(quantidade)) {
-            return LancarValorNegativoExcecao("quantidade");
-        } else if (!ValidarValorPositivo(preco)) {
-            return LancarValorNegativoExcecao("preco");
-        } else if (!ValidarCasasDecimais(quantidade)) {
-            return LancarCasasDecimaisExcecao();
-        } else {
-            return null;
-        }
-    }
-
-    public boolean ValidarCasasDecimais(Double valor) {
+    public void ValidarCasasDecimais(Double valor) throws IllegalArgumentException {
         boolean maiorQueDuasCasasDecimais = BigDecimal.valueOf(valor).scale() > _2CASASDECIMAIS;
         if (maiorQueDuasCasasDecimais) {
-            return false;
-        } else {
-            return true;
+            throw LancarCasasDecimaisExcecao();
         }
     }
 
-    public void TentarVenderAtivos (IAtivo ativo, Double preco, Double quantidade, IContaCorrente conta) throws IllegalArgumentException {
-        if (!ValidarExisteAtivo(ativo)) {
-            throw LancarAtivoNuloExcecao();
-        } else if (ValidarTransacao(ativo, preco, quantidade) != null){
-            throw ValidarTransacao(ativo, preco, quantidade);
-        } else if(!ValidarVenda(ativo, quantidade)){
-            throw LancarAtivosInsuficientesExcecao();
-        } else if (!ValidarExisteAtivo(ativo)) {
-            throw LancarAtivoNuloExcecao();
-        } else {
-            String mensagem = "Venda de Ativos: " + ativo.GetNome() + " | quantidade: " + quantidade;
-            IMovimento movimento = new Movimento(ativo.GetNome(), preco, quantidade);
-            conta.GetSaldo().LancarEntrada(MultiplicarValorQuantidade(preco, quantidade), mensagem);
-            AtualizarHTQuantidadeAtivos(ativo, -quantidade);
-            vendas.add(movimento);
-        }
+    public void TentarVenderAtivos(IAtivo ativo, Double preco, Double quantidade, IContaCorrente conta)
+            throws IllegalArgumentException {
+
+        ValidarExisteAtivo(ativo);
+        ValidarTransacao(ativo, preco, quantidade);
+        ValidarVenda(ativo, quantidade);
+        String mensagem = "Venda de Ativos: " + ativo.GetNome() + " | quantidade: " + quantidade;
+        IMovimento movimento = new Movimento(ativo.GetNome(), preco, quantidade);
+        conta.GetSaldo().LancarEntrada(MultiplicarValorQuantidade(preco, quantidade), mensagem);
+        AtualizarHTQuantidadeAtivos(ativo, -quantidade);
+        vendas.add(movimento);
     }
 
-    private boolean ValidarExisteAtivo(IAtivo ativo) {
-        if (htQuantidadeAtivos.get(ativo.GetNome()) == null){
-            return false;
-        } else {
-            return true;
+    private void ValidarExisteAtivo(IAtivo ativo) throws IllegalArgumentException {
+        if (htQuantidadeAtivos.get(ativo.GetNome()) == null) {
+            throw LancarAtivoNuloExcecao();
         }
     }
 
@@ -173,21 +142,17 @@ public class Movimentacao implements IMovimentacao {
         }
     }
 
-    public boolean ValidarValorPositivo(Double preco) {
-        if (preco <= 0) {
-            return false;
-        } else {
-            return true;
+    public void ValidarValorPositivo(Double valor, String campo) {
+        if (valor <= 0) {
+            throw new ValorNegativoException(campo);
         }
     }
 
-    public boolean ValidarVenda(IAtivo ativo, Double quantidade) {
+    public void ValidarVenda(IAtivo ativo, Double quantidade) throws IllegalArgumentException {
         BigDecimal ativos = new BigDecimal(String.valueOf(GetQuantidadeAtivos(ativo)));
         BigDecimal quantidadeDecimal = new BigDecimal(String.valueOf(quantidade));
-        if (ativos.subtract(quantidadeDecimal).compareTo(BigDecimal.ZERO) >= 0) {
-            return true;
-        } else {
-            return false;
+        if (ativos.subtract(quantidadeDecimal).compareTo(BigDecimal.ZERO) < 0) {
+            throw LancarAtivosInsuficientesExcecao();
         }
     }
 
@@ -203,12 +168,11 @@ public class Movimentacao implements IMovimentacao {
         IllegalArgumentException e = new IllegalArgumentException("Ativos insuficientes");
         return e;
     }
-    
 
-    public IllegalArgumentException LancarValorNegativoExcecao(String variavel) {
-        IllegalArgumentException e = new IllegalArgumentException("Valor " + variavel + " precisa ser maior que zero");
-        return e;
-    }
+    // public IllegalArgumentException LancarValorNegativoExcecao(String variavel) {
+    //     IllegalArgumentException e = new IllegalArgumentException("Valor " + variavel + " precisa ser maior que zero");
+    //     return e;
+    // }
 
     public IllegalArgumentException LancarAtivoNuloExcecao() {
         IllegalArgumentException e = new IllegalArgumentException("Nao foi possivel achar o ativo");
@@ -218,5 +182,9 @@ public class Movimentacao implements IMovimentacao {
     public IllegalArgumentException LancarCasasDecimaisExcecao() {
         IllegalArgumentException e = new IllegalArgumentException("Numero quantidade com mais que 2 casas decimais");
         return e;
+    }
+
+    public void Baco() throws ArithmeticException {
+        throw new NumberFormatException("/ by zero");
     }
 }

@@ -1,6 +1,6 @@
-package com.Corretora;
+package com.corretora.interfaces;
 
-interface IContaCorrente {
+public interface IContaCorrente {
     public ISaldo GetSaldo();
     public IMovimentacao GetMovimentacao();
     public IConsulta GetConsulta();

@@ -1,8 +1,8 @@
-package com.Corretora;
+package com.corretora.interfaces;
 
 import java.util.LinkedList;
 
-interface IMovimentacao {
+public interface IMovimentacao {
     public void ComprarAtivos(IAtivo ativo, Double preco, Double quantidade, IContaCorrente conta);
 
     public void VenderAtivos(IAtivo ativo, Double preco, Double quantidade, IContaCorrente conta);

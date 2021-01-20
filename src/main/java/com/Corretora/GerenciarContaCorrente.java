@@ -1,6 +1,11 @@
-package com.Corretora;
+package com.corretora;
 
 import java.util.ArrayList;
+
+import com.corretora.interfaces.IAtivo;
+import com.corretora.interfaces.IContaCorrente;
+import com.corretora.interfaces.IControleAtivos;
+import com.corretora.interfaces.IRegistro;
 
 public class GerenciarContaCorrente {
 

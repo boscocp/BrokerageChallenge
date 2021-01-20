@@ -1,8 +1,11 @@
-package com.Corretora;
+package com.corretora.interfaces;
 
 import java.util.List;
 
-interface IControleAtivos {
+import com.corretora.enums.Tipo;
+import com.corretora.model.Ativo;
+
+public interface IControleAtivos {
     public void Criar(String nome, Double preco, Tipo tipo);
     public void Deletar(String nome);
     public Ativo GetAtivo(String nome);
