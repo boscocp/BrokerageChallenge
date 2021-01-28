@@ -5,9 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.corretora.ContaCorrente;
-import com.corretora.ControleAtivos;
-import com.corretora.Movimentacao;
 import com.corretora.enums.Tipo;
 import com.corretora.exception.ValorNegativoException;
 import com.corretora.interfaces.IContaCorrente;
@@ -41,13 +38,15 @@ public class MovimentacaoTest {
         IControleAtivos controle = new ControleAtivos();
         Movimentacao movimentacao = new Movimentacao();
         String mensagemEsperada = "Saldo insuficiente";
-        try {
-            controle.Criar("YDUQ3", 23.14d, Tipo.RV);
-            conta.GetSaldo().LancarEntrada(300d, "");
+        controle.Criar("YDUQ3", 23.14d, Tipo.RV);
+        conta.GetSaldo().LancarEntrada(300d, "");
+
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
             movimentacao.ComprarAtivos(controle.GetAtivos().get(0), 230.14d, 100d, conta);
-        } catch (Exception e) {
-            assertTrue(e.getMessage().equals(mensagemEsperada));
-        }
+        });
+        assertTrue( conta.GetSaldo().Consultar() ==  300d);
+        String actualMessage = exception.getMessage();
+        assertEquals(actualMessage, mensagemEsperada);     
     }
 
     @Test
@@ -70,14 +69,11 @@ public class MovimentacaoTest {
         IContaCorrente conta = new ContaCorrente();
         IControleAtivos controle = new ControleAtivos();
         Movimentacao movimentacao = new Movimentacao();
-        try {
-            conta.GetSaldo().LancarEntrada(300d, "");
-            controle.Criar("YDUQ3", 23.14d, Tipo.RV);
-            movimentacao.ComprarAtivos(controle.GetAtivos().get(0), 23.14d, 10d, conta);
-            assertTrue(movimentacao.GetQuantidadeAtivos(controle.GetAtivos().get(0)) == 10d);
-        } catch (Exception e) {
-
-        }
+        conta.GetSaldo().LancarEntrada(300d, "");
+        controle.Criar("YDUQ3", 23.14d, Tipo.RV);
+        movimentacao.ComprarAtivos(controle.GetAtivos().get(0), 23.14d, 10d, conta);
+        assertTrue(movimentacao.GetQuantidadeAtivos(controle.GetAtivos().get(0)) == 10d);
+        
     }
 
     @Test
@@ -199,16 +195,5 @@ public class MovimentacaoTest {
         } catch (Exception e) {
             assertEquals(mensagemEsperada, e.getMessage());
         }
-    }
-
-    @Test
-    public void bacoTemqueLancarExcecaoTest() {
-        Movimentacao movimentacao = new Movimentacao();
-        Exception exception = assertThrows(NumberFormatException.class, () -> {
-            movimentacao.Baco();
-        });
-        String expectedMessage = "/ by zero";
-        String actualMessage = exception.getMessage();
-        assertEquals(actualMessage, expectedMessage);
     }
 }
